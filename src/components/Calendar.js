@@ -153,12 +153,6 @@ export class Calendar extends Component {
 
   lastRenderedMonth = null;
 
-  renderMonthSelector = () => {
-    const { month, isGregorian } = this.state;
-    const { styles } = this.props;
-    return <MonthSelector styles={styles} isGregorian={isGregorian} selectedMonth={month} />;
-  };
-
   renderDays = () => {
     const { month, selectedDay, isGregorian, mode } = this.state;
     const { children, min, max, styles, arrayOfRepetitiveHolidays } = this.props;

@@ -443,10 +443,9 @@ li.rc-time-picker-panel-select-option-disabled:hover {
   font-family: inherit;
 }
 
-/* .today button {
+.today button {
   border: 3px solid #4285f4 !important;
-  background-color: #4285f4;
-} */
+}
 
 .jalaali.calendarContainer .selectToday {
   padding: 4px 0 6px 0;
@@ -465,8 +464,8 @@ li.rc-time-picker-panel-select-option-disabled:hover {
   margin-top: 2rem;
   -webkit-transition: 0.2s all ease-in-out;
   transition: 0.2s all ease-in-out;
-  -webkit-transition-property: background;
-  transition-property: background;
+  -webkit-transition-property: #4285f4;
+  transition-property: #4285f4;
 }
 
 .selectToday:hover {

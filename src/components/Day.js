@@ -7,9 +7,7 @@ import { persianNumber, persianToEnglishNumbers } from '../utils/persian';
 import { withStyles } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 
-const newStyles = (theme) => {
-  const palette = theme.palette;
-  console.log("myTheme", theme);
+const newStyles = ({palette}) => {
   return ({
     today: {
       '& button': {
@@ -133,8 +131,6 @@ class Day extends Component {
       arrayOfRepetitiveHolidays,
       ...rest
     } = this.props;
-
-    console.log("sese", (parseInt(this.props.numberOfTasks) * 10).toString(16));
 
     const className = classnames(
       styles.dayWrapper,
