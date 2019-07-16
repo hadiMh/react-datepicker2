@@ -33,12 +33,6 @@ export function addZero(val) {
   return val;
 }
 
-export function checkToday(compare) {
-  const today = new Date();
-  const todayString =
-    String(today.getFullYear()) +
-    addZero(String(today.getMonth() + 1)) +
-    addZero(String(today.getDate()));
-
-  return compare === todayString;
+export function checkToday(day, today) {
+  return day.isSame(today, "day");
 }

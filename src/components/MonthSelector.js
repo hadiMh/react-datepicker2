@@ -69,7 +69,10 @@ export default class MonthSelector extends Component {
     const { setMonth, setCalendarMode } = this.context;
     const { isGregorian } = this.props;
     const monthYearFormat = isGregorian ? 'M-YYYY' : 'jM-jYYYY';
-    setMonth(moment(key, monthYearFormat));
+    console.log("dsedse", key);
+    console.log("dsedse", moment("2020", "YYYY").format("jYYYY-jMM"));
+    console.log("setMonth", setMonth);
+    setMonth(moment("1401-6-12", "jYYYY-jMM"));
     setCalendarMode('days');
   }
 

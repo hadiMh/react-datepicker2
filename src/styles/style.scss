@@ -467,7 +467,7 @@ li.rc-time-picker-panel-select-option-disabled:hover {
     padding: 5px 0 7px 0;
     margin-top: 2rem;
     transition: 0.2s all ease-in-out;
-    transition-property: background;
+    transition-property: #4285f4;
 
     &:hover {
         background: darken(#4285f4, 10);

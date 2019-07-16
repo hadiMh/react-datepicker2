@@ -27,3 +27,19 @@ function latinToPersian(string) {
 export function persianNumber(input) {
   return latinToPersian(prepareNumber(input));
 }
+
+
+
+export function persianToEnglishNumbers (numberString) {
+  const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+  const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+  return numberString.toString()
+    .split('')
+    .filter( num => persianNumbers.includes(num) || englishNumbers.includes(num) )
+    .map( num => {
+      if(englishNumbers.includes(num)) return num;
+      return persianNumbers.indexOf(num);  
+    } )
+    .join('');
+}

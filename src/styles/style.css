@@ -443,9 +443,10 @@ li.rc-time-picker-panel-select-option-disabled:hover {
   font-family: inherit;
 }
 
-.today button {
+/* .today button {
   border: 3px solid #4285f4 !important;
-}
+  background-color: #4285f4;
+} */
 
 .jalaali.calendarContainer .selectToday {
   padding: 4px 0 6px 0;

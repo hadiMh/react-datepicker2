@@ -1,27 +1,36 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment-jalaali';
 import onClickOutside from 'react-onclickoutside';
+import moment from 'moment-jalaali';
+
+import { persianNumber } from '../utils/persian';
+import RangeList from '../utils/RangesList';
+import { getDaysOfMonth, checkToday } from '../utils/moment-helper';
+
 import DaysViewHeading from './DaysViewHeading';
 import DaysOfWeek from './DaysOfWeek';
 import MonthSelector from './MonthSelector';
 import Day from './Day';
-import { getDaysOfMonth, checkToday } from '../utils/moment-helper';
+
 import { defaultStyles } from './DefaultStyles';
-import RangeList from '../utils/RangesList';
+import ShowDayEvents from './ShowDayEvents';
 
 export class Calendar extends Component {
   static propTypes = {
     min: PropTypes.object,
     max: PropTypes.object,
+    value: PropTypes.object,
     styles: PropTypes.object,
     selectedDay: PropTypes.object,
     defaultMonth: PropTypes.object,
+    containerProps: PropTypes.object,
+    onChange: PropTypes.func,
     onSelect: PropTypes.func,
     onClickOutside: PropTypes.func,
-    containerProps: PropTypes.object,
     isGregorian: PropTypes.bool,
-    calendarClass: PropTypes.string
+    activateGoToTodayButton: PropTypes.bool,
+    calendarClass: PropTypes.string,
+    arrayOfRepetitiveHolidays: PropTypes.array,
   };
 
   static childContextTypes = {
@@ -72,6 +81,15 @@ export class Calendar extends Component {
     } else if (min && this.props.min !== min && this.state.month.isSame(this.props.min)) {
       this.setMonth(min.clone());
     }
+  }
+
+  componentDidMount() {
+    const { isGregorian } = this.state;
+    const monthFormat = isGregorian ? 'Month' : 'jMonth';
+
+    this.setState({
+      month: this.state.month.clone().add(0, monthFormat)
+    });
   }
 
   setMode = mode => {
@@ -142,8 +160,8 @@ export class Calendar extends Component {
   };
 
   renderDays = () => {
-    const { month, selectedDay, isGregorian } = this.state;
-    const { children, min, max, styles, outsideClickIgnoreClass } = this.props;
+    const { month, selectedDay, isGregorian, mode } = this.state;
+    const { children, min, max, styles, arrayOfRepetitiveHolidays } = this.props;
 
     let days;
 
@@ -157,30 +175,54 @@ export class Calendar extends Component {
 
     const monthFormat = isGregorian ? 'MM' : 'jMM';
     const dateFormat = isGregorian ? 'YYYYMMDD' : 'jYYYYjMMjDD';
-
     return (
       <div className={this.props.calendarClass}>
         {children}
         <DaysViewHeading
-          timePicker={this.props.timePicker}
           isGregorian={isGregorian}
           styles={styles}
           month={month}
+          showYearInHeaderOnlyOnOtherYears={true}
+          setMonth={this.setMonth}
+          setCalendarMode={this.setCalendarMode}
+          setMode={this.setMode}
+          headerMode={this.state.mode}
         />
-        <DaysOfWeek styles={styles} isGregorian={isGregorian} />
+        <DaysOfWeek 
+          styles={styles}
+          isGregorian={isGregorian}
+        />
         <div className={styles.dayPickerContainer}>
           {days.map(day => {
             const isCurrentMonth = day.format(monthFormat) === month.format(monthFormat);
+
+            const jalali = isGregorian ? '' : 'j';
+
+            /* Boolean to indicate if the day is before today to make it grey */
+            const isBeforeTodayInCurrentMonth =
+              (
+                persianNumber(day.format(`${jalali}YYYY`)) < moment().format(`${jalali}YYYY`)
+                || (
+                  persianNumber(day.format(`${jalali}YYYY`)) === moment().format(`${jalali}YYYY`)
+                  && persianNumber(day.format(`${jalali}MM`)) < moment().format(`${jalali}MM`)
+                )
+                || (
+                  persianNumber(day.format(`${jalali}YYYY`)) === moment().format(`${jalali}YYYY`)
+                  && persianNumber(day.format(`${jalali}MM`)) === moment().format(`${jalali}MM`)
+                  && persianNumber(day.format(`${jalali}DD`)) < moment().format(`${jalali}DD`)
+                )
+              ) ? true : false;
+
             const selected = selectedDay ? selectedDay.isSame(day, 'day') : false;
             const key = day.format(dateFormat);
-            const isToday = checkToday(day.format('YYYYMMDD'));
+            const isToday = checkToday(day, moment());
 
             // disabling by old min-max props
             const disabled = (min ? day.isBefore(min) : false) || (max ? day.isAfter(max) : false);
 
             // new method for disabling and highlighting the ranges of days
             const dayState = this.state.ranges.getDayState(day);
-
+            
             return (
               <Day
                 isGregorian={isGregorian}
@@ -193,34 +235,38 @@ export class Calendar extends Component {
                 selected={selected}
                 isCurrentMonth={isCurrentMonth}
                 styles={styles}
+                isBeforeTodayInCurrentMonth={isBeforeTodayInCurrentMonth}
+                arrayOfRepetitiveHolidays={arrayOfRepetitiveHolidays}
+                numberOfTasks={day.format("DD")}
+                maxNumberOfTasks={'31'}
               />
             );
           })}
         </div>
+        {/* <ShowDayEvents/> */}
       </div>
     );
   };
 
   render() {
     const {
-      selectedDay,
-      min,
-      max,
-      onClickOutside,
-      outsideClickIgnoreClass,
       styles,
-      className
+      className,
+      activateGoToTodayButton
     } = this.props;
-    const { mode, isGregorian } = this.state;
+    const { isGregorian } = this.state;
 
     const jalaaliClassName = isGregorian ? '' : 'jalaali ';
 
     return (
-      <div className={`${styles.calendarContainer} ${jalaaliClassName}${className}`}>
-        {mode === 'monthSelector' ? this.renderMonthSelector() : this.renderDays()}
-        <button className="selectToday" onClick={() => this.handleClickOnDay(moment())}>
-          {isGregorian ? 'today' : 'امروز'}
-        </button>
+      <div className={`${styles.calendarContainer} ${jalaaliClassName}${className} `}>
+        { this.renderDays() }
+        { !!activateGoToTodayButton && 
+          <button className="selectToday" onClick={() => this.handleClickOnDay(moment())}>
+            {isGregorian ? 'today' : 'امروز'}
+          </button>
+        }
+        
       </div>
     );
   }

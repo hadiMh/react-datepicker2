@@ -8,6 +8,7 @@ var React = require('react');
 var React__default = _interopDefault(React);
 var ReactDOM = require('react-dom');
 var ReactDOM__default = _interopDefault(ReactDOM);
+var indexof = _interopDefault(require('indexof'));
 
 function styleInject(css, ref) {
   if ( ref === void 0 ) ref = {};
@@ -55,7 +56,7 @@ function createCommonjsModule(fn, module) {
 
 var moment = createCommonjsModule(function (module, exports) {
 (function (global, factory) {
-    module.exports = factory();
+     module.exports = factory() ;
 }(commonjsGlobal, (function () {
     var hookCallback;
 
@@ -6606,7 +6607,7 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
           );
           err.name = 'Invariant Violation';
           throw err;
-        } else if (typeof console !== 'undefined') {
+        } else if ( typeof console !== 'undefined') {
           // Old behavior for people using React.PropTypes
           var cacheKey = componentName + ':' + propName;
           if (
@@ -6783,7 +6784,7 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
 
   function createUnionTypeChecker(arrayOfTypeCheckers) {
     if (!Array.isArray(arrayOfTypeCheckers)) {
-      printWarning$1('Invalid argument supplied to oneOfType, expected an instance of array.');
+       printWarning$1('Invalid argument supplied to oneOfType, expected an instance of array.') ;
       return emptyFunctionThatReturnsNull;
     }
 
@@ -9696,7 +9697,7 @@ var classnames = createCommonjsModule(function (module) {
 		return classes.join(' ');
 	}
 
-	if (module.exports) {
+	if ( module.exports) {
 		classNames.default = classNames;
 		module.exports = classNames;
 	} else {
@@ -10912,7 +10913,7 @@ if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 });
 
 var _core = createCommonjsModule(function (module) {
-var core = module.exports = { version: '2.6.8' };
+var core = module.exports = { version: '2.6.9' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 });
 var _core_1 = _core.version;
@@ -11167,7 +11168,7 @@ var store = _global[SHARED] || (_global[SHARED] = {});
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
   version: _core.version,
-  mode: 'pure',
+  mode:  'pure' ,
   copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
 });
 });
@@ -11479,7 +11480,7 @@ var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORC
     $default = function values() { return $native.call(this); };
   }
   // Define iterator
-  if ((FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+  if (( FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
     _hide(proto, ITERATOR, $default);
   }
   if (DEFAULT) {
@@ -11630,7 +11631,7 @@ var _meta_5 = _meta.onFreeze;
 
 var defineProperty$1 = _objectDp.f;
 var _wksDefine = function (name) {
-  var $Symbol = _core.Symbol || (_core.Symbol = {});
+  var $Symbol = _core.Symbol || (_core.Symbol =  {} );
   if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty$1($Symbol, name, { value: _wksExt.f(name) });
 };
 
@@ -13150,7 +13151,7 @@ function setOffset(elem, offset, option) {
   if (option.useCssRight || option.useCssBottom) {
     setLeftTop(elem, offset, option);
   } else if (option.useCssTransform && getTransformName() in document.body.style) {
-    setTransform$1(elem, offset, option);
+    setTransform$1(elem, offset);
   } else {
     setLeftTop(elem, offset, option);
   }
@@ -13217,7 +13218,19 @@ function getPBMWidth(elem, props, which) {
   return value;
 }
 
-var domUtils = {};
+var domUtils = {
+  getParent: function getParent(element) {
+    var parent = element;
+    do {
+      if (parent.nodeType === 11 && parent.host) {
+        parent = parent.host;
+      } else {
+        parent = parent.parentNode;
+      }
+    } while (parent && parent.nodeType !== 1 && parent.nodeType !== 9);
+    return parent;
+  }
+};
 
 each(['Width', 'Height'], function (name) {
   domUtils['doc' + name] = function (refWin) {
@@ -13261,7 +13274,7 @@ function getWH(elem, name, ex) {
   var which = name === 'width' ? ['Left', 'Right'] : ['Top', 'Bottom'];
   var borderBoxValue = name === 'width' ? elem.getBoundingClientRect().width : elem.getBoundingClientRect().height;
   var computedStyle = getComputedStyleX(elem);
-  var isBorderBox = isBorderBoxFn(elem, computedStyle);
+  var isBorderBox = isBorderBoxFn(elem);
   var cssBoxValue = 0;
   if (borderBoxValue === null || borderBoxValue === undefined || borderBoxValue <= 0) {
     borderBoxValue = undefined;
@@ -13280,16 +13293,16 @@ function getWH(elem, name, ex) {
   var val = borderBoxValue || cssBoxValue;
   if (extra === CONTENT_INDEX) {
     if (borderBoxValueOrIsBorderBox) {
-      return val - getPBMWidth(elem, ['border', 'padding'], which, computedStyle);
+      return val - getPBMWidth(elem, ['border', 'padding'], which);
     }
     return cssBoxValue;
   } else if (borderBoxValueOrIsBorderBox) {
     if (extra === BORDER_INDEX) {
       return val;
     }
-    return val + (extra === PADDING_INDEX ? -getPBMWidth(elem, ['border'], which, computedStyle) : getPBMWidth(elem, ['margin'], which, computedStyle));
+    return val + (extra === PADDING_INDEX ? -getPBMWidth(elem, ['border'], which) : getPBMWidth(elem, ['margin'], which));
   }
-  return cssBoxValue + getPBMWidth(elem, BOX_MODELS.slice(extra), which, computedStyle);
+  return cssBoxValue + getPBMWidth(elem, BOX_MODELS.slice(extra), which);
 }
 
 var cssShow = {
@@ -13332,7 +13345,7 @@ each(['width', 'height'], function (name) {
         var computedStyle = getComputedStyleX(elem);
         var isBorderBox = isBorderBoxFn(elem);
         if (isBorderBox) {
-          val += getPBMWidth(elem, ['padding', 'border'], which, computedStyle);
+          val += getPBMWidth(elem, ['padding', 'border'], which);
         }
         return css$1(elem, name, val);
       }
@@ -13420,6 +13433,8 @@ mix(utils, domUtils);
 /**
  * 得到会导致元素显示不全的祖先元素
  */
+var getParent = utils.getParent;
+
 
 function getOffsetParent(element) {
   if (utils.isWindow(element) || element.nodeType === 9) {
@@ -13447,10 +13462,10 @@ function getOffsetParent(element) {
   var skipStatic = positionStyle === 'fixed' || positionStyle === 'absolute';
 
   if (!skipStatic) {
-    return element.nodeName.toLowerCase() === 'html' ? null : element.parentNode;
+    return element.nodeName.toLowerCase() === 'html' ? null : getParent(element);
   }
 
-  for (parent = element.parentNode; parent && parent !== body; parent = parent.parentNode) {
+  for (parent = getParent(element); parent && parent !== body; parent = getParent(parent)) {
     positionStyle = utils.css(parent, 'position');
     if (positionStyle !== 'static') {
       return parent;
@@ -13458,6 +13473,9 @@ function getOffsetParent(element) {
   }
   return null;
 }
+
+var getParent$1 = utils.getParent;
+
 
 function isAncestorFixed(element) {
   if (utils.isWindow(element) || element.nodeType === 9) {
@@ -13467,7 +13485,7 @@ function isAncestorFixed(element) {
   var doc = utils.getDocument(element);
   var body = doc.body;
   var parent = null;
-  for (parent = element.parentNode; parent && parent !== body; parent = parent.parentNode) {
+  for (parent = getParent$1(element); parent && parent !== body; parent = getParent$1(parent)) {
     var positionStyle = utils.css(parent, 'position');
     if (positionStyle === 'fixed') {
       return true;
@@ -13669,8 +13687,8 @@ function getElFuturePos(elRegion, refNodeRegion, points, offset, targetOffset) {
   var diff = [p2.left - p1.left, p2.top - p1.top];
 
   return {
-    left: elRegion.left - diff[0] + offset[0] - targetOffset[0],
-    top: elRegion.top - diff[1] + offset[1] - targetOffset[1]
+    left: Math.round(elRegion.left - diff[0] + offset[0] - targetOffset[0]),
+    top: Math.round(elRegion.top - diff[1] + offset[1] - targetOffset[1])
   };
 }
 
@@ -14413,16 +14431,6 @@ var TransitionEvents = {
   }
 };
 
-var indexOf = [].indexOf;
-
-var indexof = function(arr, obj){
-  if (indexOf) return arr.indexOf(obj);
-  for (var i = 0; i < arr.length; ++i) {
-    if (arr[i] === obj) return i;
-  }
-  return -1;
-};
-
 var componentIndexof = function(arr, obj){
   if (arr.indexOf) return arr.indexOf(obj);
   for (var i = 0; i < arr.length; ++i) {
@@ -14910,7 +14918,9 @@ var AnimateChild = function (_React$Component) {
 }(React__default.Component);
 
 AnimateChild.propTypes = {
-  children: propTypes.any
+  children: propTypes.any,
+  animation: propTypes.any,
+  transitionName: propTypes.any
 };
 
 var defaultKey = 'rc_animate_' + Date.now();
@@ -15146,6 +15156,8 @@ var Animate = function (_React$Component) {
 
 Animate.isAnimate = true;
 Animate.propTypes = {
+  className: propTypes.string,
+  style: propTypes.object,
   component: propTypes.any,
   componentProps: propTypes.object,
   animation: propTypes.object,
@@ -16067,11 +16079,7 @@ var Trigger = function (_React$Component) {
     if (popupVisible || this._component || forceRender) {
       portal = React__default.createElement(
         Portal,
-        {
-          key: 'portal',
-          getContainer: this.getContainer,
-          didUpdate: this.handlePortalUpdate
-        },
+        { key: 'portal', getContainer: this.getContainer, didUpdate: this.handlePortalUpdate },
         this.getComponent()
       );
     }
@@ -16236,7 +16244,11 @@ var _initialiseProps$2 = function _initialiseProps() {
     }
     _this5.preClickTime = 0;
     _this5.preTouchTime = 0;
-    if (event && event.preventDefault) {
+
+    // Only prevent default when all the action is click.
+    // https://github.com/ant-design/ant-design/issues/17043
+    // https://github.com/ant-design/ant-design/issues/17291
+    if (_this5.isClickToShow() && (_this5.isClickToHide() || _this5.isBlurToHide()) && event && event.preventDefault) {
       event.preventDefault();
     }
     var nextVisible = !_this5.state.popupVisible;
@@ -16602,27 +16614,6 @@ defineProperty(Header, "propTypes", {
   currentSelectPanel: propTypes.string
 });
 
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-    var ownKeys = Object.keys(source);
-
-    if (typeof Object.getOwnPropertySymbols === 'function') {
-      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-      }));
-    }
-
-    ownKeys.forEach(function (key) {
-      defineProperty(target, key, source[key]);
-    });
-  }
-
-  return target;
-}
-
-var objectSpread = _objectSpread;
-
 var scrollTo = function scrollTo(element, to, duration) {
   var requestAnimationFrame = window.requestAnimationFrame || function requestAnimationFrameTimeout() {
     return setTimeout(arguments[0], 10);
@@ -16764,6 +16755,10 @@ defineProperty(Select, "propTypes", {
   onMouseEnter: propTypes.func
 });
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { if (i % 2) { var source = arguments[i] != null ? arguments[i] : {}; ownKeys(source, true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(arguments[i])); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(arguments[i], key)); }); } } return target; }
+
 var pad = function pad(value) {
   return value < 10 ? "0".concat(value) : "".concat(value);
 };
@@ -16856,7 +16851,7 @@ function (_React$Component) {
           return hour < 12 ? value < 12 : value >= 12;
         });
         formattedOptions = formattedOptions.map(function (option) {
-          return objectSpread({}, option, {
+          return _objectSpread({}, option, {
             label: option.value <= 12 ? option.value : pad(option.value - 12)
           });
         }).filter(function (_ref) {
