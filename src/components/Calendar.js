@@ -9,7 +9,6 @@ import { getDaysOfMonth, checkToday } from '../utils/moment-helper';
 
 import DaysViewHeading from './DaysViewHeading';
 import DaysOfWeek from './DaysOfWeek';
-import MonthSelector from './MonthSelector';
 import Day from './Day';
 
 import { defaultStyles } from './DefaultStyles';
