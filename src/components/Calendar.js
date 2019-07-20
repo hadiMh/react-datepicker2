@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 import moment from 'moment-jalaali';
 
-import { persianNumber } from '../utils/persian';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import { persianNumber, persianToEnglishNumbers } from '../utils/persian';
 import RangeList from '../utils/RangesList';
 import { getDaysOfMonth, checkToday } from '../utils/moment-helper';
 
@@ -30,6 +33,8 @@ export class Calendar extends Component {
     activateGoToTodayButton: PropTypes.bool,
     calendarClass: PropTypes.string,
     arrayOfRepetitiveHolidays: PropTypes.array,
+    setSelectedDayConnectedAction: PropTypes.func,
+    setSelectedMonthConnectedAction: PropTypes.func,
   };
 
   static childContextTypes = {
@@ -86,6 +91,7 @@ export class Calendar extends Component {
     const { isGregorian } = this.state;
     const monthFormat = isGregorian ? 'Month' : 'jMonth';
 
+    this.props.setSelectedMonthConnectedAction(this.props.value);
     this.setState({
       month: this.state.month.clone().add(0, monthFormat)
     });
@@ -96,6 +102,7 @@ export class Calendar extends Component {
   };
 
   setMonth = month => {
+    this.props.setSelectedMonthConnectedAction(month);
     this.setState({ month });
   };
 
@@ -106,7 +113,7 @@ export class Calendar extends Component {
   nextMonth = () => {
     const { isGregorian } = this.state;
     const monthFormat = isGregorian ? 'Month' : 'jMonth';
-
+    this.props.setSelectedMonthConnectedAction(this.state.month.clone().add(1, monthFormat));
     this.setState({
       month: this.state.month.clone().add(1, monthFormat)
     });
@@ -115,7 +122,7 @@ export class Calendar extends Component {
   prevMonth = () => {
     const { isGregorian } = this.state;
     const monthFormat = isGregorian ? 'Month' : 'jMonth';
-
+    this.props.setSelectedMonthConnectedAction(this.state.month.clone().subtract(1, monthFormat));
     this.setState({
       month: this.state.month.clone().subtract(1, monthFormat)
     });
@@ -136,6 +143,7 @@ export class Calendar extends Component {
   handleClickOnDay = selectedDay => {
     const { onSelect, onChange } = this.props;
     this.selectDay(selectedDay);
+    this.props.setSelectedDayConnectedAction(selectedDay);
     if (onSelect) {
       onSelect(selectedDay);
     }
@@ -154,7 +162,7 @@ export class Calendar extends Component {
 
   renderDays = () => {
     const { month, selectedDay, isGregorian, mode } = this.state;
-    const { children, min, max, styles, arrayOfRepetitiveHolidays } = this.props;
+    const { children, min, max, styles, arrayOfRepetitiveHolidays, maxNumberOfTasksOfSelectedMonth } = this.props;
 
     let days;
 
@@ -215,6 +223,8 @@ export class Calendar extends Component {
 
             // new method for disabling and highlighting the ranges of days
             const dayState = this.state.ranges.getDayState(day);
+            const numberOfTasksOfDay = this.props.numberOfTasksForEachDayInSelectedMonth[Number(persianToEnglishNumbers(day.format('jDD')))];
+            const maxNumberOfTasks = this.props.maxNumberOfTasksOfSelectedMonth;
             
             return (
               <Day
@@ -230,8 +240,8 @@ export class Calendar extends Component {
                 styles={styles}
                 isBeforeTodayInCurrentMonth={isBeforeTodayInCurrentMonth}
                 arrayOfRepetitiveHolidays={arrayOfRepetitiveHolidays}
-                numberOfTasks={day.format("DD")}
-                maxNumberOfTasks={'31'}
+                numberOfTasks={numberOfTasksOfDay}
+                maxNumberOfTasks={maxNumberOfTasks}
               />
             );
           })}
@@ -265,4 +275,10 @@ export class Calendar extends Component {
   }
 }
 
-export default onClickOutside(Calendar);
+const mapStateToProps = ({
+  workspace,
+}) => ({
+  selectedDay: workspace.selectedDay,
+});
+
+export default connect(mapStateToProps)(onClickOutside(Calendar));
