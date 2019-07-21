@@ -27,7 +27,12 @@ const config = {
       exclude: 'node_modules/**',
       runtimeHelpers: true
     }),
-    commonjs(),
+    commonjs({
+      include: 'node_modules/**',
+      namedExports: {
+        'node_modules/react-is/index.js': ['isValidElementType', 'isContextConsumer']
+      }
+    }),
     nodeGlobals(),
   ],
   external: Object.keys(globals)

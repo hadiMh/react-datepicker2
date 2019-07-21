@@ -70,25 +70,6 @@ const newStyles = ({palette}) => {
       width: '4px !important',
       height: '4px !important',
     },
-    dayTaskDot: props => {
-      const {isCurrentMonth, isBeforeTodayInCurrentMonth} = props;
-      const numberOfTasks = +persianToEnglishNumbers(props.numberOfTasks || '0');
-      const maxNumberOfTasks = +persianToEnglishNumbers(props.maxNumberOfTasks || '1');
-      const percent = (( numberOfTasks / maxNumberOfTasks ) * 100);
-      const primaryColorHexAlpha = color(palette.primary.main).alpha(Math.round(percent) / 100);
-      const commonStyle = {
-        backgroundColor: `${primaryColorHexAlpha} !important`,
-        border: 'none !important',
-        width: '4px !important',
-        height: '4px !important',
-      };
-      return (isBeforeTodayInCurrentMonth || !isCurrentMonth)
-        ? ({
-          ...commonStyle,
-          opacity: '0.2',
-        })
-        : commonStyle
-    }
   })
 };
 
@@ -173,24 +154,16 @@ class Day extends Component {
     const maxNumberOfTasks = +persianToEnglishNumbers(this.props.maxNumberOfTasks || '1');
     const percent = (( numberOfTasks / maxNumberOfTasks ) * 100);
     this.setState({percent: percent});
-    const primaryColorHexAlpha = color(this.props.theme.palette.primary.main).alpha(Math.round(percent) / 100);
-    const commonStyle = {
-      backgroundColor: `${primaryColorHexAlpha} !important`,
-      border: 'none !important',
-      width: '4px !important',
-      height: '4px !important',
-    };
+    const hexPercent = (Math.round(percent) / 100).toString(16);
+    const primaryColorHexAlpha = `${this.props.theme.palette.primary.main}${hexPercent === 0 ? '00' : hexPercent}`;
 
     return (
       <div className={className}>
-        <Button onClick={this.handleClick.bind(this)} disabled={disabled} /*className={isToday ? classes.daySelected : ''}*/ >
+        <Button onClick={this.handleClick.bind(this)} disabled={disabled} >
           {isGregorian ? day.format('D') : persianNumber(day.format('jD'))}
         </Button>
         <div className="highLightDot-container" onClick={this.handleClick.bind(this)}>
-          {/* {
-            <span className="highLightDot" style={{backgroundColor: `${primaryColorHexAlpha} !important`}}></span>
-          } */}
-          { percent !== 0 &&
+          { percent !== 0 && isCurrentMonth &&
             <span
               className="highLightDot"
               style={{
