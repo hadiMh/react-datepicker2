@@ -155,7 +155,7 @@ class Day extends Component {
     const percent = (( numberOfTasks / maxNumberOfTasks ) * 100);
     this.setState({percent: percent});
     const hexPercent = (Math.round(percent) / 100).toString(16);
-    const primaryColorHexAlpha = `${this.props.theme.palette.primary.main}${hexPercent === 0 ? '00' : hexPercent}`;
+    const primaryColorHexAlpha = `${this.props.theme.palette.primary.main}${hexPercent === '0' ? '00' : hexPercent}`;
 
     return (
       <div className={className}>
